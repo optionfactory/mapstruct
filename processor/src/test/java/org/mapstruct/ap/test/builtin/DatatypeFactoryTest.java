@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,7 @@ public class DatatypeFactoryTest {
     @Test
     public void testNoConflictsWithOwnDatatypeFactory() throws ParseException {
 
+        TimeZone.setDefault( TimeZone.getTimeZone( "Europe/Berlin" ) );
         DateProperty source1 = new DateProperty();
         source1.setProp( createDate( "31-08-1982 10:20:56" ) );
 
