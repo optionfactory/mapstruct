@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct-parent</artifactId>
-        <version>1.3.0.Final</version>
+        <version>1.3.0.Final-typeannotations-SNAPSHOT</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
 
