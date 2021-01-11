@@ -11,7 +11,7 @@
 
     <groupId>org.mapstruct</groupId>
     <artifactId>mapstruct-parent</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0.typeann_sourceprop-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>MapStruct Parent</name>
@@ -326,7 +326,7 @@
                         <dependency>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>mapstruct-build-config</artifactId>
-                            <version>${project.version}</version>
+                            <version>1.5.0-SNAPSHOT</version>
                         </dependency>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
