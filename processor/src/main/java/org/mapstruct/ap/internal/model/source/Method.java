@@ -97,6 +97,9 @@ public interface Method {
      */
     Parameter getTargetTypeParameter();
 
+    default Parameter getSourcePropertyParameter() {
+        return null;
+    }
 
     /**
      * Returns the {@link Accessibility} of this method.

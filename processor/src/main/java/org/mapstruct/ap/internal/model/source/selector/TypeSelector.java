@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.ParameterBinding;
-import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.source.Method;
@@ -55,11 +54,15 @@ public class TypeSelector implements MethodSelector {
             availableBindings = getAvailableParameterBindingsFromMethod(
                 mappingMethod,
                 targetType,
-                criteria.getSourceRHS()
+                criteria
             );
         }
         else {
-            availableBindings = getAvailableParameterBindingsFromSourceTypes( sourceTypes, targetType, mappingMethod );
+            availableBindings = getAvailableParameterBindingsFromSourceTypes(
+                sourceTypes,
+                targetType,
+                mappingMethod,
+                criteria );
         }
 
         for ( SelectedMethod<T> method : methods ) {
@@ -79,24 +82,29 @@ public class TypeSelector implements MethodSelector {
     }
 
     private List<ParameterBinding> getAvailableParameterBindingsFromMethod(Method method, Type targetType,
-        SourceRHS sourceRHS) {
+        SelectionCriteria criteria) {
         List<ParameterBinding> availableParams = new ArrayList<>( method.getParameters().size() + 3 );
 
-        if ( sourceRHS != null ) {
+        if ( criteria.getSourceRHS() != null ) {
             availableParams.addAll( ParameterBinding.fromParameters( method.getContextParameters() ) );
-            availableParams.add( ParameterBinding.fromSourceRHS( sourceRHS ) );
+            availableParams.add( ParameterBinding.fromSourceRHS( criteria.getSourceRHS() ) );
         }
         else {
             availableParams.addAll( ParameterBinding.fromParameters( method.getParameters() ) );
         }
 
         addMappingTargetAndTargetTypeBindings( availableParams, targetType );
-
+        addSourcePropertyBinding( availableParams, criteria.getSourcePropertyName() );
         return availableParams;
     }
 
+    private void addSourcePropertyBinding(List<ParameterBinding> availableParams, String targetPropertyName) {
+        availableParams.add( ParameterBinding.forSourcePropertyBinding(
+            typeFactory.getType( java.lang.String.class ), targetPropertyName ) );
+    }
+
     private List<ParameterBinding> getAvailableParameterBindingsFromSourceTypes(List<Type> sourceTypes,
-            Type targetType, Method mappingMethod) {
+            Type targetType, Method mappingMethod, SelectionCriteria criteria) {
 
         List<ParameterBinding> availableParams = new ArrayList<>( sourceTypes.size() + 2 );
 
@@ -111,7 +119,7 @@ public class TypeSelector implements MethodSelector {
         }
 
         addMappingTargetAndTargetTypeBindings( availableParams, targetType );
-
+        addSourcePropertyBinding( availableParams, criteria.getSourcePropertyName() );
         return availableParams;
     }
 
@@ -294,6 +302,7 @@ public class TypeSelector implements MethodSelector {
 
         for ( ParameterBinding candidate : candidateParameters ) {
             if ( parameter.isTargetType() == candidate.isTargetType()
+                && parameter.isSourceProperty() == candidate.isSourceProperty()
                 && parameter.isMappingTarget() == candidate.isMappingTarget()
                 && parameter.isMappingContext() == candidate.isMappingContext() ) {
                 result.add( candidate );

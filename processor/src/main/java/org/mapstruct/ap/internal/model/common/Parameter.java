@@ -14,6 +14,7 @@ import javax.lang.model.element.VariableElement;
 
 import org.mapstruct.ap.internal.gem.ContextGem;
 import org.mapstruct.ap.internal.gem.MappingTargetGem;
+import org.mapstruct.ap.internal.gem.SourcePropertyGem;
 import org.mapstruct.ap.internal.gem.TargetTypeGem;
 import org.mapstruct.ap.internal.util.Collections;
 
@@ -30,6 +31,7 @@ public class Parameter extends ModelElement {
     private final Type type;
     private final boolean mappingTarget;
     private final boolean targetType;
+    private final boolean sourceProperty;
     private final boolean mappingContext;
 
     private final boolean varArgs;
@@ -41,24 +43,26 @@ public class Parameter extends ModelElement {
         this.type = type;
         this.mappingTarget = MappingTargetGem.instanceOn( element ) != null;
         this.targetType = TargetTypeGem.instanceOn( element ) != null;
+        this.sourceProperty = SourcePropertyGem.instanceOn( element ) != null;
         this.mappingContext = ContextGem.instanceOn( element ) != null;
         this.varArgs = varArgs;
     }
 
-    private Parameter(String name, Type type, boolean mappingTarget, boolean targetType, boolean mappingContext,
-                      boolean varArgs) {
+    private Parameter(String name, Type type, boolean mappingTarget, boolean targetType, boolean sourceProperty,
+                      boolean mappingContext, boolean varArgs) {
         this.element = null;
         this.name = name;
         this.originalName = name;
         this.type = type;
         this.mappingTarget = mappingTarget;
         this.targetType = targetType;
+        this.sourceProperty = sourceProperty;
         this.mappingContext = mappingContext;
         this.varArgs = varArgs;
     }
 
     public Parameter(String name, Type type) {
-        this( name, type, false, false, false, false );
+        this( name, type, false, false, false, false, false );
     }
 
     public Element getElement() {
@@ -104,6 +108,10 @@ public class Parameter extends ModelElement {
 
     public boolean isTargetType() {
         return targetType;
+    }
+
+    public boolean isSourceProperty() {
+        return sourceProperty;
     }
 
     public boolean isMappingContext() {
@@ -154,6 +162,7 @@ public class Parameter extends ModelElement {
             true,
             false,
             false,
+            false,
             false
         );
     }
@@ -195,8 +204,15 @@ public class Parameter extends ModelElement {
         return parameters.stream().filter( Parameter::isTargetType ).findAny().orElse( null );
     }
 
+    public static Parameter getSourcePropertyParameter(List<Parameter> parameters) {
+        return parameters.stream().filter( Parameter::isSourceProperty ).findAny().orElse( null );
+    }
+
     private static boolean isSourceParameter( Parameter parameter ) {
-        return !parameter.isMappingTarget() && !parameter.isTargetType() && !parameter.isMappingContext();
+        return !parameter.isMappingTarget()
+            && !parameter.isTargetType()
+            && !parameter.isSourceProperty()
+            && !parameter.isMappingContext();
     }
 
 }

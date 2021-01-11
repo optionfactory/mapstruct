@@ -79,6 +79,7 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
         SelectionCriteria criteria = SelectionCriteria.forMappingMethods( selectionParameters,
                         method.getOptions().getIterableMapping().getMappingControl( ctx.getElementUtils() ),
                         callingContextTargetPropertyName,
+                        null,
                         false
         );
 

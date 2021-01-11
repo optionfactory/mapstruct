@@ -84,6 +84,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
                 keySelectionParameters,
                 method.getOptions().getMapMapping().getKeyMappingControl( ctx.getElementUtils() ),
                 null,
+                null,
                 false
             );
 
@@ -131,6 +132,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
             SelectionCriteria valueCriteria = SelectionCriteria.forMappingMethods(
                 valueSelectionParameters,
                 method.getOptions().getMapMapping().getValueMappingControl( ctx.getElementUtils() ),
+                null,
                 null,
                 false );
 

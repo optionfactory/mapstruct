@@ -45,6 +45,7 @@ public class SourceMethod implements Method {
     private final List<Parameter> parameters;
     private final Parameter mappingTargetParameter;
     private final Parameter targetTypeParameter;
+    private final Parameter sourcePropertyParameter;
     private final boolean isObjectFactory;
     private final Type returnType;
     private final Accessibility accessibility;
@@ -217,6 +218,7 @@ public class SourceMethod implements Method {
 
         this.mappingTargetParameter = Parameter.getMappingTargetParameter( parameters );
         this.targetTypeParameter = Parameter.getTargetTypeParameter( parameters );
+        this.sourcePropertyParameter = Parameter.getSourcePropertyParameter( parameters );
         this.hasObjectFactoryAnnotation = ObjectFactoryGem.instanceOn( executable ) != null;
         this.isObjectFactory = determineIfIsObjectFactory();
 
@@ -332,6 +334,11 @@ public class SourceMethod implements Method {
     @Override
     public Parameter getTargetTypeParameter() {
         return targetTypeParameter;
+    }
+
+    @Override
+    public Parameter getSourcePropertyParameter() {
+        return sourcePropertyParameter;
     }
 
     public boolean isIterableMapping() {
@@ -476,6 +483,10 @@ public class SourceMethod implements Method {
      */
     public static boolean containsTargetTypeParameter(List<Parameter> parameters) {
         return parameters.stream().anyMatch( Parameter::isTargetType );
+    }
+
+    public static boolean containsSourcePropertyParameter(List<Parameter> parameters) {
+        return parameters.stream().anyMatch( Parameter::isSourceProperty );
     }
 
     @Override

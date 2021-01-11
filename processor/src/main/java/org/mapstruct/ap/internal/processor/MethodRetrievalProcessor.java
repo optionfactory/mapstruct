@@ -122,6 +122,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             ExecutableType methodType = typeFactory.getMethodType( mapperAnnotation.mapperConfigType(), executable );
             List<Parameter> parameters = typeFactory.getParameters( methodType, executable );
             boolean containsTargetTypeParameter = SourceMethod.containsTargetTypeParameter( parameters );
+            boolean containsSourcePropertyParameter = SourceMethod.containsSourcePropertyParameter( parameters );
 
             // prototype methods don't have prototypes themselves
             List<SourceMethod> prototypeMethods = Collections.emptyList();
@@ -132,6 +133,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
                     executable,
                     parameters,
                     containsTargetTypeParameter,
+                    containsSourcePropertyParameter,
                     mapperAnnotation,
                     prototypeMethods,
                     mapperTypeElement
@@ -212,6 +214,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
 
         boolean methodRequiresImplementation = method.getModifiers().contains( Modifier.ABSTRACT );
         boolean containsTargetTypeParameter = SourceMethod.containsTargetTypeParameter( parameters );
+        boolean containsSourcePropertyParameter = SourceMethod.containsSourcePropertyParameter( parameters );
 
         //add method with property mappings if an implementation needs to be generated
         if ( ( usedMapper.equals( mapperToImplement ) ) && methodRequiresImplementation ) {
@@ -219,6 +222,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
                 method,
                 parameters,
                 containsTargetTypeParameter,
+                containsSourcePropertyParameter,
                 mapperOptions,
                 prototypeMethods,
                 mapperToImplement );
@@ -236,6 +240,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
     private SourceMethod getMethodRequiringImplementation(ExecutableType methodType, ExecutableElement method,
             List<Parameter> parameters,
             boolean containsTargetTypeParameter,
+            boolean containsSourcePropertyParameter,
             MapperOptions mapperOptions,
             List<SourceMethod> prototypeMethods,
             TypeElement mapperToImplement) {
@@ -253,7 +258,8 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             contextParameters,
             resultType,
             returnType,
-            containsTargetTypeParameter
+            containsTargetTypeParameter,
+            containsSourcePropertyParameter
         );
 
         if ( !isValid ) {
@@ -398,13 +404,17 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
         int validSourceParameters = 0;
         int targetParameters = 0;
         int targetTypeParameters = 0;
+        int sourcePropertyParameters = 0;
 
-        for ( Parameter param : parameters ) {
+        for ( Parameter param : parameters ) { // REVIEW: HERE!
             if ( param.isMappingTarget() ) {
                 targetParameters++;
             }
             else if ( param.isTargetType() ) {
                 targetTypeParameters++;
+            }
+            else if ( param.isSourceProperty() ) {
+                sourcePropertyParameters++;
             }
             else if ( !param.isMappingContext() ) {
                 validSourceParameters++;
@@ -413,7 +423,8 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
 
         return validSourceParameters == sourceParamCount
             && targetParameters <= targetParamCount
-            && targetTypeParameters <= 1;
+            && targetTypeParameters <= 1
+            && sourcePropertyParameters <= 1;
     }
 
     private Parameter extractTargetParameter(List<Parameter> parameters) {
@@ -437,7 +448,8 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
 
     private boolean checkParameterAndReturnType(ExecutableElement method, List<Parameter> sourceParameters,
                                                 Parameter targetParameter, List<Parameter> contextParameters,
-                                                Type resultType, Type returnType, boolean containsTargetTypeParameter) {
+                                                Type resultType, Type returnType, boolean containsTargetTypeParameter,
+                                                boolean containsSourcePropertyParameter) {
         if ( sourceParameters.isEmpty() ) {
             messager.printMessage( method, Message.RETRIEVAL_NO_INPUT_ARGS );
             return false;
@@ -490,6 +502,11 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
 
         if ( containsTargetTypeParameter ) {
             messager.printMessage( method, Message.RETRIEVAL_MAPPING_HAS_TARGET_TYPE_PARAMETER );
+            return false;
+        }
+
+        if ( containsSourcePropertyParameter ) {
+            messager.printMessage( method, Message.RETRIEVAL_MAPPING_HAS_SOURCE_PROPERTY_PARAMETER );
             return false;
         }
 

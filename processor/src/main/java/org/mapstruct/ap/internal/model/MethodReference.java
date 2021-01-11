@@ -246,7 +246,7 @@ public class MethodReference extends ModelElement implements Assignment {
      */
     public Type getSingleSourceParameterType() {
         for ( Parameter parameter : getSourceParameters() ) {
-            if ( !parameter.isTargetType() ) {
+            if ( !parameter.isTargetType() && !parameter.isSourceProperty() ) {
                 return parameter.getType();
             }
         }
@@ -391,7 +391,12 @@ public class MethodReference extends ModelElement implements Assignment {
                         ( getSourceReference() != null ? getSourceReference() : "" );
         String returnTypeAsString = returnType != null ? returnType.toString() : "";
         List<String> arguments = sourceParameters.stream()
-            .map( p -> p.isMappingContext() || p.isMappingTarget() || p.isTargetType() ? p.getName() : argument )
+            .map( p -> p.isMappingContext()
+                    || p.isMappingTarget()
+                    || p.isTargetType()
+                    || p.isSourceProperty()
+                        ? p.getName()
+                        : argument )
             .collect( Collectors.toList() );
 
         return returnTypeAsString + " " + mapper + "#" + name + "(" + Strings.join( arguments, "," ) + ")";

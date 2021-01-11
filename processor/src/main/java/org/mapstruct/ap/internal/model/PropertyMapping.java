@@ -236,6 +236,7 @@ public class PropertyMapping extends ModelElement {
                 selectionParameters,
                 mappingControl,
                 targetPropertyName,
+                sourcePropertyName != null ? sourcePropertyName : sourceReference.getDeepestPropertyName(),
                 preferUpdateMethods
             );
 
@@ -831,6 +832,7 @@ public class PropertyMapping extends ModelElement {
             SelectionCriteria criteria = SelectionCriteria.forMappingMethods( selectionParameters,
                 mappingControl,
                 targetPropertyName,
+                sourcePropertyName,
                             method.getMappingTargetParameter() != null
             );
 

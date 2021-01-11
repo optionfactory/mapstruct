@@ -42,6 +42,8 @@
             ${ext.targetBeanName}<#if ext.targetReadAccessorName??>.${ext.targetReadAccessorName}</#if><#t>
         <#elseif param.mappingContext>
             ${param.variableName}<#t>
+        <#elseif param.sourceProperty>
+            "${param.variableName}"<#t>
         <#elseif param.sourceRHS??>
             <@_assignment assignmentToUse=param.sourceRHS/><#t>
         <#elseif assignment??>

@@ -145,6 +145,7 @@ public enum Message {
     RETRIEVAL_NON_ASSIGNABLE_RESULTTYPE( "The result type is not assignable to the the return type." ),
     RETRIEVAL_ITERABLE_TO_NON_ITERABLE( "Can't generate mapping method from iterable type from java stdlib to non-iterable type." ),
     RETRIEVAL_MAPPING_HAS_TARGET_TYPE_PARAMETER( "Can't generate mapping method that has a parameter annotated with @TargetType." ),
+    RETRIEVAL_MAPPING_HAS_SOURCE_PROPERTY_PARAMETER( "Can't generate mapping method that has a parameter annotated with @SourceProperty." ),
     RETRIEVAL_NON_ITERABLE_TO_ITERABLE( "Can't generate mapping method from non-iterable type to iterable type from java stdlib." ),
     RETRIEVAL_PRIMITIVE_PARAMETER( "Can't generate mapping method with primitive parameter type." ),
     RETRIEVAL_PRIMITIVE_RETURN( "Can't generate mapping method with primitive return type." ),

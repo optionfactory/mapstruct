@@ -24,6 +24,7 @@ public class SelectionCriteria {
     private final List<TypeMirror> qualifiers = new ArrayList<>();
     private final List<String> qualifiedByNames = new ArrayList<>();
     private final String targetPropertyName;
+    private final String sourcePropertyName;
     private final TypeMirror qualifyingResultType;
     private final SourceRHS sourceRHS;
     private boolean preferUpdateMapping;
@@ -35,8 +36,8 @@ public class SelectionCriteria {
     private final boolean allow2Steps;
 
     public SelectionCriteria(SelectionParameters selectionParameters, MappingControl mappingControl,
-                             String targetPropertyName, boolean preferUpdateMapping, boolean objectFactoryRequired,
-                             boolean lifecycleCallbackRequired) {
+                             String targetPropertyName, String sourcePropertyName, boolean preferUpdateMapping,
+                             boolean objectFactoryRequired, boolean lifecycleCallbackRequired) {
         if ( selectionParameters != null ) {
             qualifiers.addAll( selectionParameters.getQualifiers() );
             qualifiedByNames.addAll( selectionParameters.getQualifyingNames() );
@@ -60,6 +61,7 @@ public class SelectionCriteria {
             this.allow2Steps = true;
         }
         this.targetPropertyName = targetPropertyName;
+        this.sourcePropertyName = sourcePropertyName;
         this.preferUpdateMapping = preferUpdateMapping;
         this.objectFactoryRequired = objectFactoryRequired;
         this.lifecycleCallbackRequired = lifecycleCallbackRequired;
@@ -89,6 +91,10 @@ public class SelectionCriteria {
 
     public String getTargetPropertyName() {
         return targetPropertyName;
+    }
+
+    public String getSourcePropertyName() {
+        return sourcePropertyName;
     }
 
     public TypeMirror getQualifyingResultType() {
@@ -129,12 +135,15 @@ public class SelectionCriteria {
 
     public static SelectionCriteria forMappingMethods(SelectionParameters selectionParameters,
                                                       MappingControl mappingControl,
-                                                      String targetPropertyName, boolean preferUpdateMapping) {
+                                                      String targetPropertyName,
+                                                      String sourcePropertyName,
+                                                      boolean preferUpdateMapping) {
 
         return new SelectionCriteria(
             selectionParameters,
             mappingControl,
             targetPropertyName,
+            sourcePropertyName,
             preferUpdateMapping,
             false,
             false
@@ -142,10 +151,10 @@ public class SelectionCriteria {
     }
 
     public static SelectionCriteria forFactoryMethods(SelectionParameters selectionParameters) {
-        return new SelectionCriteria( selectionParameters, null, null, false, true, false );
+        return new SelectionCriteria( selectionParameters, null, null, null, false, true, false );
     }
 
     public static SelectionCriteria forLifecycleMethods(SelectionParameters selectionParameters) {
-        return new SelectionCriteria( selectionParameters, null, null, false, false, true );
+        return new SelectionCriteria( selectionParameters, null, null, null, false, false, true );
     }
 }
